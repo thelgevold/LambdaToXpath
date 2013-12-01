@@ -17,12 +17,20 @@ namespace LambdaToXpath
             if (element.Parent != null)
             {
                 xpath.Append(element.Parent.Name);
+                
+                if (element.Parent.Attributes.Count > 0)
+                {
+                    xpath.Append("[");
+                    xpath.Append(string.Join(" and ", element.Parent.Attributes.Select(a => GetAttributePart(a))));
+                    xpath.Append("]");
+                }
+
                 xpath.Append("/");
             }
 
             xpath.Append(element.ElementName);
 
-            if (element.Attributes.Count > 0)
+            if(element.Attributes.Count > 0)
             {
                 xpath.Append("[");
                 xpath.Append(string.Join(" and ",element.Attributes.Select(a => GetAttributePart(a))));

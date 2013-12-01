@@ -26,23 +26,68 @@ namespace LambdaToXpath
 
         public static void Parse(Element element, string expressionPart)
         {
-            if(expressionPart.Contains("Parent.Name") == true)
+            bool done = ParseParent(element,expressionPart);
+
+            if (done == false)
             {
-                element.Parent = new Parent() { Name = GetName(expressionPart) };
+                ParseContextElement(element, expressionPart);
             }
-            else if(expressionPart.Contains(".ElementName") == true)
+        }
+
+        private static bool ParseContextElement(Element element, string expressionPart)
+        { 
+            if(expressionPart.Contains(".ElementName") == true)
             {
                 element.ElementName = GetName(expressionPart);
+                return true;
             }
             else if (Regex.IsMatch(expressionPart,"Attribute(.*)\\.Text") == true)
             {
                 var keyVal = GetAttributeNameAndValue(expressionPart);
                 element.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value),ExactMatch = true });
+                return true;
             }
             else if (Regex.IsMatch(expressionPart, "Attribute(.*)\\.Contains") == true)
             {
                 var keyVal = GetAttributeNameAndContainedText(expressionPart);
                 element.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value) });
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool ParseParent(Element element, string expressionPart)
+        {
+            if (expressionPart.Contains("Parent.Name") == true)
+            {
+                EnsureParent(element);
+                element.Parent.Name = GetName(expressionPart);
+                return true;
+            }
+            else if (Regex.IsMatch(expressionPart, "Parent.Attribute(.*)\\.Contains") == true)
+            {
+                EnsureParent(element);
+                var keyVal = GetAttributeNameAndContainedText(expressionPart);
+                element.Parent.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value) });
+                return true;
+            }
+            else if (Regex.IsMatch(expressionPart, "Parent.Attribute(.*)\\.Text") == true)
+            {
+                EnsureParent(element);
+                var keyVal = GetAttributeNameAndValue(expressionPart);
+                element.Parent.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value), ExactMatch = true });
+                return true;
+            }
+
+            return false;
+        }
+
+        private static void EnsureParent(Element element)
+        {
+            if (element.Parent == null)
+            {
+                element.Parent = new Parent();
             }
         }
 
