@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using LambdaToXpath;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace UnitTests
         [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_With_Just_Name()
         {
-            var xpath = LambdaToXpath.LambdaToXpath.Where(e => e.ElementName == "td");
+            var xpath = CreateXpath.Where(e => e.ElementName == "td");
 
             Assert.AreEqual("//td", xpath);
         }

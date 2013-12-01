@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LambdaToXpath
 {
-    public class LambdaToXpath
+    public class CreateXpath
     {
         public static string Where(Expression<Func<Element, bool>> exp)
         {

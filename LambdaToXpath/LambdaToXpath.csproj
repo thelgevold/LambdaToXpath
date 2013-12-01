@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ElementParser.cs" />
-    <Compile Include="LambdaToXpath.cs" />
+    <Compile Include="CreateXpath.cs" />
     <Compile Include="Model\Attribute.cs" />
     <Compile Include="Model\Element.cs" />
     <Compile Include="Model\Parent.cs" />
