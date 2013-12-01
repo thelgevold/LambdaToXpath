@@ -25,12 +25,21 @@ namespace LambdaToXpath
             if (element.Attributes.Count > 0)
             {
                 xpath.Append("[");
-                xpath.Append(string.Join(" and ",element.Attributes.Where(a => a.ExactMatch == true).Select(a => string.Format("@{0}='{1}'",a.Name,a.Text))));
-                xpath.Append(string.Join(" and ", element.Attributes.Where(a => a.ExactMatch == false).Select(a => string.Format("contains(@{0},'{1}')", a.Name, a.Text))));
+                xpath.Append(string.Join(" and ",element.Attributes.Select(a => GetAttributePart(a))));
                 xpath.Append("]");
             }
             
             return xpath.ToString();
+        }
+
+        private static string GetAttributePart(Model.Attribute a)
+        {
+            if (a.ExactMatch == true)
+            {
+                return string.Format("@{0}='{1}'", a.Name, a.Text);
+            }
+
+            return string.Format("contains(@{0},'{1}')", a.Name, a.Text);
         }
     }
 }

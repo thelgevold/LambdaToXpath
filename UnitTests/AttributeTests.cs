@@ -13,6 +13,14 @@ namespace UnitTests
         [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_With_Single_Attribute_Containing_Text()
         {
+            var xpath = LambdaToXpath.LambdaToXpath.Where(e => e.ElementName == "td" && e.Attribute("id").Contains("_parent_child") && e.Attribute("class").Text == "class1");
+
+            Assert.AreEqual("//td[@class='class1' and contains(@id,'_parent_child')]", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_One_Attribute_Containing_Text_And_Another_Attribute_With_Exact_Text()
+        {
             var xpath = LambdaToXpath.LambdaToXpath.Where(e => e.ElementName == "td" && e.Attribute("id").Contains("_parent_child"));
 
             Assert.AreEqual("//td[contains(@id,'_parent_child')]", xpath);
