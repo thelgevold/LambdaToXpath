@@ -8,6 +8,14 @@ namespace UnitTests
     public class ParentTests
     {
         [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Parent_With_One_Attribute_Containing_Text_And_Another_Attribute_With_Exact_Text()
+        {
+            var xpath = CreateXpath.Where(e => e.ElementName == "td" && e.Attribute("id").Contains("_parent_child") && e.Attribute("class").Text == "myClass");
+
+            Assert.AreEqual("//td[@class='myClass' and contains(@id,'_parent_child')]", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Element_With_Parent()
         {
             var xpath = CreateXpath.Where(e => e.ElementName == "td" && e.Parent.Name == "tr");
