@@ -16,5 +16,13 @@ namespace LambdaToXpath.Model
         internal string Name { get; set; } 
 
         public string Text { get; set; }
+
+        public bool Contains(string value)
+        {
+            Text = value;
+            return true;
+        }
+
+        public bool ExactMatch { get; set; }
     }
 }

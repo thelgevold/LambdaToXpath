@@ -11,6 +11,22 @@ namespace UnitTests
     public class AttributeTests
     {
         [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Single_Attribute_Containing_Text()
+        {
+            var xpath = LambdaToXpath.LambdaToXpath.Where(e => e.ElementName == "td" && e.Attribute("id").Contains("_parent_child"));
+
+            Assert.AreEqual("//td[contains(@id,'_parent_child')]", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Multiple_Attributes_Containing_Text()
+        {
+            var xpath = LambdaToXpath.LambdaToXpath.Where(e => e.ElementName == "td" && e.Attribute("id").Contains("_parent_child") == true && e.Attribute("class").Contains("myClass") == true);
+
+            Assert.AreEqual("//td[contains(@class,'myClass') and contains(@id,'_parent_child')]", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_With_Single_Attribute_With_Text()
         {
             var xpath = LambdaToXpath.LambdaToXpath.Where(e => e.ElementName == "td" && e.Attribute("class").Text == "testClass");

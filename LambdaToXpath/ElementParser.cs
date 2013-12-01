@@ -37,8 +37,20 @@ namespace LambdaToXpath
             else if (Regex.IsMatch(expressionPart,"Attribute(.*)\\.Text") == true)
             {
                 var keyVal = GetAttributeNameAndValue(expressionPart);
+                element.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value),ExactMatch = true });
+            }
+            else if (Regex.IsMatch(expressionPart, "Attribute(.*)\\.Contains") == true)
+            {
+                var keyVal = GetAttributeNameAndContainedText(expressionPart);
                 element.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value) });
             }
+        }
+
+        private static KeyValuePair<string, string> GetAttributeNameAndContainedText(string expressionPart)
+        {
+            var matches = Regex.Matches(expressionPart.Trim('('), @"(?<=\().+?(?=\))");
+
+            return new KeyValuePair<string, string>(CleanUp(matches[0].Value), CleanUp(matches[1].Value));
         }
 
         private static KeyValuePair<string,string> GetAttributeNameAndValue(string expressionPart)
