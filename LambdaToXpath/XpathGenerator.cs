@@ -28,7 +28,7 @@ namespace LambdaToXpath
                 xpath.Append("/");
             }
 
-            xpath.Append(element.ElementName);
+            xpath.Append(element.TargetElementName);
 
             if(element.Attributes.Count > 0)
             {

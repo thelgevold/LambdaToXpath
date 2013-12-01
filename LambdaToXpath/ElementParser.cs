@@ -35,10 +35,10 @@ namespace LambdaToXpath
         }
 
         private static bool ParseContextElement(Element element, string expressionPart)
-        { 
-            if(expressionPart.Contains(".ElementName") == true)
+        {
+            if (expressionPart.Contains(".TargetElementName") == true)
             {
-                element.ElementName = GetName(expressionPart);
+                element.TargetElementName = GetName(expressionPart);
                 return true;
             }
             else if (Regex.IsMatch(expressionPart,"Attribute(.*)\\.Text") == true)

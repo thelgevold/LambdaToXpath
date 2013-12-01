@@ -13,7 +13,7 @@ namespace LambdaToXpath.Model
             Attributes = new List<Attribute>();
         }
 
-        public string ElementName { get; set; }
+        public string TargetElementName { get; set; }
 
         public Parent Parent { get; set; }
 
