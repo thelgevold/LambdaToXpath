@@ -9,5 +9,7 @@ namespace LambdaToXpath.Model
     public class Sibling 
     {
         public string Name { get; set; }
+
+        public bool Preceding { get; set; }
     }
 }

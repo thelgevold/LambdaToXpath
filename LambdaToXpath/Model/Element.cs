@@ -11,22 +11,26 @@ namespace LambdaToXpath.Model
         public Element()
         {
             Attributes = new List<Attribute>();
+            Siblings = new List<Sibling>();
         }
 
         public string TargetElementName { get; set; }
 
         public Parent Parent { get; set; }
 
+        public List<Sibling> Siblings { get; set; }
+
         public Sibling FollowingSibling { get; set; }
 
-        public Sibling PreceedingSibling { get; set; }
+        public Sibling PrecedingSibling { get; set; }
 
         public Attribute Attribute(string name)
         {
             return new Attribute(name);
         }
 
-        internal List<Attribute> Attributes { get; set; }
-      
+        public List<Attribute> Attributes { get; set; }
+
+        public bool ElementHasConditions { get { return Attributes.Count + Siblings.Count > 0; } }
     }
 }

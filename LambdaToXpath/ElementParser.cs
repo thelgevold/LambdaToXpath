@@ -32,6 +32,26 @@ namespace LambdaToXpath
             {
                 ParseContextElement(element, expressionPart);
             }
+            if (done == false)
+            {
+                ParseSiblings(element, expressionPart);
+            }
+        }
+
+        private static bool ParseSiblings(Element element, string expressionPart)
+        {
+            if (expressionPart.Contains(".FollowingSibling.Name") == true)
+            {
+                element.Siblings.Add(new Sibling() { Name = GetName(expressionPart) });
+                return true;
+            }
+            else if (expressionPart.Contains(".PrecedingSibling.Name") == true)
+            {
+                element.Siblings.Add(new Sibling() { Name = GetName(expressionPart),Preceding = true });
+                return true;
+            }
+
+            return false;
         }
 
         private static bool ParseContextElement(Element element, string expressionPart)

@@ -30,14 +30,37 @@ namespace LambdaToXpath
 
             xpath.Append(element.TargetElementName);
 
-            if(element.Attributes.Count > 0)
+            if (element.ElementHasConditions == true)
             {
                 xpath.Append("[");
-                xpath.Append(string.Join(" and ",element.Attributes.Select(a => GetAttributePart(a))));
+
+                if (element.Attributes.Count > 0)
+                {
+                    xpath.Append(string.Join(" and ", element.Attributes.Select(a => GetAttributePart(a))));
+                }
+
+                if (element.Siblings.Count > 0)
+                {
+                    if (element.Attributes.Count > 0)
+                    {
+                        xpath.Append(" and ");
+                    }
+                    xpath.Append(string.Join(" and ", element.Siblings.Select(s => GetSiblingPart(s))));
+                }
+
                 xpath.Append("]");
             }
-            
             return xpath.ToString();
+        }
+
+        private static string GetSiblingPart(Sibling s)
+        {
+            if (s.Preceding == true)
+            {
+                return string.Format("preceding-sibling::{0}", s.Name);
+            }
+
+            return string.Format("following-sibling::{0}", s.Name);
         }
 
         private static string GetAttributePart(Model.Attribute a)

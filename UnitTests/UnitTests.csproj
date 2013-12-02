@@ -50,10 +50,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="AttributeTests.cs" />
-    <Compile Include="ParentTests.cs" />
+    <Compile Include="Expressions\AttributeTests.cs" />
+    <Compile Include="Expressions\ParentTests.cs" />
+    <Compile Include="Model\ElementTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleElementTests.cs" />
+    <Compile Include="Expressions\SiblingTests.cs" />
+    <Compile Include="Expressions\SimpleElementTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LambdaToXpath\LambdaToXpath.csproj">
