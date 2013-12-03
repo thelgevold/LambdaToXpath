@@ -41,16 +41,29 @@ namespace LambdaToXpath
 
                 if (element.Siblings.Count > 0)
                 {
-                    if (element.Attributes.Count > 0)
-                    {
-                        xpath.Append(" and ");
-                    }
+                    xpath.Append(EnsureAndOperator(element.Attributes.Count));
                     xpath.Append(string.Join(" and ", element.Siblings.Select(s => GetSiblingPart(s))));
+                }
+
+                if (element.Position.HasValue == true)
+                {
+                    xpath.Append(EnsureAndOperator(element.Attributes.Count,element.Siblings.Count));
+                    xpath.Append(string.Format("position()={0}", element.Position.Value));
                 }
 
                 xpath.Append("]");
             }
             return xpath.ToString();
+        }
+
+        private static string EnsureAndOperator(params int[] conditions)
+        {
+            if (conditions.Sum() > 0)
+            {
+                return " and ";
+            }
+
+            return string.Empty;
         }
 
         private static string GetSiblingPart(Sibling s)

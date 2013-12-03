@@ -24,6 +24,8 @@ namespace LambdaToXpath.Model
 
         public Sibling PrecedingSibling { get; set; }
 
+        public int? Position { get; set; }
+
         public Attribute Attribute(string name)
         {
             return new Attribute(name);
@@ -31,6 +33,6 @@ namespace LambdaToXpath.Model
 
         public List<Attribute> Attributes { get; set; }
 
-        public bool ElementHasConditions { get { return Attributes.Count + Siblings.Count > 0; } }
+        public bool ElementHasConditions { get { return Attributes.Count + Siblings.Count + (Position ?? 0) > 0; } }
     }
 }

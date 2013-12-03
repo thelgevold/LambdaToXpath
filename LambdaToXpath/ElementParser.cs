@@ -36,18 +36,22 @@ namespace LambdaToXpath
             {
                 ParseSiblings(element, expressionPart);
             }
+            if (done == false)
+            {
+                ParsePosition(element, expressionPart);
+            }
         }
 
         private static bool ParseSiblings(Element element, string expressionPart)
         {
             if (expressionPart.Contains(".FollowingSibling.Name") == true)
             {
-                element.Siblings.Add(new Sibling() { Name = GetName(expressionPart) });
+                element.Siblings.Add(new Sibling() { Name = GetValue(expressionPart) });
                 return true;
             }
             else if (expressionPart.Contains(".PrecedingSibling.Name") == true)
             {
-                element.Siblings.Add(new Sibling() { Name = GetName(expressionPart),Preceding = true });
+                element.Siblings.Add(new Sibling() { Name = GetValue(expressionPart),Preceding = true });
                 return true;
             }
 
@@ -58,7 +62,7 @@ namespace LambdaToXpath
         {
             if (expressionPart.Contains(".TargetElementName") == true)
             {
-                element.TargetElementName = GetName(expressionPart);
+                element.TargetElementName = GetValue(expressionPart);
                 return true;
             }
             else if (Regex.IsMatch(expressionPart,"Attribute(.*)\\.Text") == true)
@@ -77,12 +81,24 @@ namespace LambdaToXpath
             return false;
         }
 
+        private static bool ParsePosition(Element element, string expressionPart)
+        {
+            if (expressionPart.Contains(".Position") == true)
+            {
+                var matches = Regex.Matches(expressionPart.Trim('('), @"(?<=\().+?(?=\))");
+                element.Position = Int32.Parse(CleanUp(matches[0].Value));
+                return true;
+            }
+
+            return false;
+        }
+
         private static bool ParseParent(Element element, string expressionPart)
         {
             if (expressionPart.Contains("Parent.Name") == true)
             {
                 EnsureParent(element);
-                element.Parent.Name = GetName(expressionPart);
+                element.Parent.Name = GetValue(expressionPart);
                 return true;
             }
             else if (Regex.IsMatch(expressionPart, "Parent.Attribute(.*)\\.Contains") == true)
@@ -127,7 +143,7 @@ namespace LambdaToXpath
             return new KeyValuePair<string, string>(CleanUp(attributeName), CleanUp(temp[1]));
         }
 
-        private static string GetName(string expressionPart)
+        private static string GetValue(string expressionPart)
         {
             var temp = expressionPart.Split("==".ToCharArray(),StringSplitOptions.RemoveEmptyEntries);
 
