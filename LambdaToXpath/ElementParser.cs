@@ -11,6 +11,8 @@ namespace LambdaToXpath
 {
     public class ElementParser
     {
+        private static string extractMethodArguments = @"(?<=\().+?(?=\))";
+
         public static void ParseExpression(BinaryExpression chain, Element element)
         {
             if (chain.Left is BinaryExpression)
@@ -85,7 +87,7 @@ namespace LambdaToXpath
         {
             if (expressionPart.Contains(".Position") == true)
             {
-                var matches = Regex.Matches(expressionPart.Trim('('), @"(?<=\().+?(?=\))");
+                var matches = Regex.Matches(expressionPart.Trim('('), extractMethodArguments);
                 element.Position = Int32.Parse(CleanUp(matches[0].Value));
                 return true;
             }
@@ -115,6 +117,12 @@ namespace LambdaToXpath
                 element.Parent.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value), ExactMatch = true });
                 return true;
             }
+            else if (expressionPart.Contains("Parent.Position") == true)
+            {
+                var matches = Regex.Matches(expressionPart.Trim('('), extractMethodArguments);
+                element.Parent.Position = Int32.Parse(CleanUp(matches[0].Value));
+                return true;
+            }
 
             return false;
         }
@@ -129,7 +137,7 @@ namespace LambdaToXpath
 
         private static KeyValuePair<string, string> GetAttributeNameAndContainedText(string expressionPart)
         {
-            var matches = Regex.Matches(expressionPart.Trim('('), @"(?<=\().+?(?=\))");
+            var matches = Regex.Matches(expressionPart.Trim('('), extractMethodArguments);
 
             return new KeyValuePair<string, string>(CleanUp(matches[0].Value), CleanUp(matches[1].Value));
         }
@@ -138,7 +146,7 @@ namespace LambdaToXpath
         {
             var temp = expressionPart.Split("==".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            var attributeName = Regex.Match(expressionPart.Trim(')','('), @"(?<=\().+?(?=\))").Value;
+            var attributeName = Regex.Match(expressionPart.Trim(')', '('), extractMethodArguments).Value;
 
             return new KeyValuePair<string, string>(CleanUp(attributeName), CleanUp(temp[1]));
         }

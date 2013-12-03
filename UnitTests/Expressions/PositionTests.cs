@@ -12,6 +12,22 @@ namespace UnitTests.Expressions
     public class PositionTests
     {
         [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Parent_With_Position()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Position == 5 && e.Parent.Name == "tr");
+
+            Assert.AreEqual("//tr[position()=5]/td", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_Were_Both_Parent_And_Child_Have_Position()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Position == 4 && e.Parent.Position == 5 && e.Parent.Name == "tr");
+
+            Assert.AreEqual("//tr[position()=5]/td[position()=4]", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_With_Position()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Position == 5);

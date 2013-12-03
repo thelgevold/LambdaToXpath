@@ -17,14 +17,21 @@ namespace LambdaToXpath
             if (element.Parent != null)
             {
                 xpath.Append(element.Parent.Name);
-                
-                if (element.Parent.Attributes.Count > 0)
+
+                if (element.Parent.ElementHasConditions == true)
                 {
                     xpath.Append("[");
-                    xpath.Append(string.Join(" and ", element.Parent.Attributes.Select(a => GetAttributePart(a))));
+                    if (element.Parent.Attributes.Count > 0)
+                    {
+                        xpath.Append(string.Join(" and ", element.Parent.Attributes.Select(a => GetAttributePart(a))));
+                    }
+                    if (element.Parent.Position.HasValue == true)
+                    {
+                        xpath.Append(EnsureAndOperator(element.Parent.Attributes.Count));
+                        xpath.Append(string.Format("position()={0}", element.Parent.Position.Value));
+                    }
                     xpath.Append("]");
                 }
-
                 xpath.Append("/");
             }
 

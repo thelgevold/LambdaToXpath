@@ -15,11 +15,15 @@ namespace LambdaToXpath.Model
 
         public string Name { get; set; }
 
+        public int? Position { get; set; }
+
         public Attribute Attribute(string name)
         {
             return new Attribute(name);
         }
 
         internal List<Attribute> Attributes { get; set; }
+
+        public bool ElementHasConditions { get { return Attributes.Count + (Position ?? 0) > 0; } }
     }
 }
