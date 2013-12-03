@@ -12,11 +12,16 @@ namespace LambdaToXpath.Model
         {
             Attributes = new List<Attribute>();
             Siblings = new List<Sibling>();
+            Relatives = new List<Relative>();
         }
 
         public string TargetElementName { get; set; }
 
         public Parent Parent { get; set; }
+
+        public Relative Descendant { get; set; }
+
+        public Relative Ancestor { get; set; }
 
         public List<Sibling> Siblings { get; set; }
 
@@ -31,8 +36,16 @@ namespace LambdaToXpath.Model
             return new Attribute(name);
         }
 
+        public List<Relative> Relatives { get; set; }
+
         public List<Attribute> Attributes { get; set; }
 
-        public bool ElementHasConditions { get { return Attributes.Count + Siblings.Count + (Position ?? 0) > 0; } }
+        public bool ElementHasConditions 
+        {
+            get 
+            {
+                return (Attributes.Count + Siblings.Count + (Position ?? 0) + Relatives.Count > 0); 
+            }
+        }
     }
 }

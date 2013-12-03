@@ -32,15 +32,19 @@ namespace LambdaToXpath
 
             if (done == false)
             {
-                ParseContextElement(element, expressionPart);
+                done = ParseContextElement(element, expressionPart);
             }
             if (done == false)
             {
-                ParseSiblings(element, expressionPart);
+                done = ParseSiblings(element, expressionPart);
             }
             if (done == false)
             {
-                ParsePosition(element, expressionPart);
+                done = ParsePosition(element, expressionPart);
+            }
+            if (done == false)
+            {
+                done = ParseRelatives(element,expressionPart);
             }
         }
 
@@ -77,6 +81,23 @@ namespace LambdaToXpath
             {
                 var keyVal = GetAttributeNameAndContainedText(expressionPart);
                 element.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value) });
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool ParseRelatives(Element element, string expressionPart)
+        {
+            if (expressionPart.Contains(".Descendant") == true)
+            {
+                element.Relatives.Add(new Relative() { Descendant = true,Name = GetValue(expressionPart)});
+                return true;
+            }
+
+            if (expressionPart.Contains(".Ancestor") == true)
+            {
+                element.Relatives.Add(new Relative() { Descendant = false, Name = GetValue(expressionPart) });
                 return true;
             }
 

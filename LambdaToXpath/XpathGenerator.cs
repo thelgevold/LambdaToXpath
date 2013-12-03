@@ -58,6 +58,12 @@ namespace LambdaToXpath
                     xpath.Append(string.Format("position()={0}", element.Position.Value));
                 }
 
+                if (element.Relatives.Count > 0)
+                {
+                    xpath.Append(EnsureAndOperator(element.Attributes.Count, element.Siblings.Count, element.Position ?? 0));
+                    xpath.Append(string.Join(" and ", element.Relatives.Select(r => GetRelativePart(r))));
+                }
+
                 xpath.Append("]");
             }
             return xpath.ToString();
@@ -71,6 +77,16 @@ namespace LambdaToXpath
             }
 
             return string.Empty;
+        }
+
+        private static string GetRelativePart(Relative r)
+        {
+            if (r.Descendant == true)
+            {
+                return string.Format("descendant::{0}", r.Name);
+            }
+
+            return string.Format("ancestor::{0}", r.Name);
         }
 
         private static string GetSiblingPart(Sibling s)

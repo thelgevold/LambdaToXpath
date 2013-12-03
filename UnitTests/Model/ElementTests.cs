@@ -12,6 +12,15 @@ namespace UnitTests.Model
     public class ElementTests
     {
         [TestMethod]
+        public void Will_Create_Square_Brackets_If_Element_Has_Relatives()
+        {
+            Element element = new Element();
+            element.Relatives.Add(new Relative());
+        
+            Assert.AreEqual(true, element.ElementHasConditions);
+        }
+
+        [TestMethod]
         public void Will_Create_Square_Brackets_If_Element_Has_Conditions()
         {
             Element element = new Element();

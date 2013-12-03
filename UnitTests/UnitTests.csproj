@@ -51,6 +51,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Expressions\AttributeTests.cs" />
+    <Compile Include="Expressions\DecendantAndAncestorTests.cs" />
     <Compile Include="Expressions\ParentTests.cs" />
     <Compile Include="Expressions\PositionTests.cs" />
     <Compile Include="Model\ElementTests.cs" />
