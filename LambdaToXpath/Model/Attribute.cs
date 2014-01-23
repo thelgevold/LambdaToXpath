@@ -17,6 +17,7 @@ namespace LambdaToXpath.Model
 
         public string Text { get; set; }
 
+        [ParserIgnoreAttribute]
         public bool Contains(string value)
         {
             Text = value;

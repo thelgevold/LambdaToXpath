@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -17,13 +18,62 @@ namespace LambdaToXpath
         {
             if (chain.Left is BinaryExpression)
             {
-                Parse(element, chain.Right.ToString());
+                Parse(element, ParseRightHandValue(chain.Right).ToString());
+
                 ParseExpression((BinaryExpression)chain.Left, element);
             }
             else
             {
-                Parse(element, string.Format("{0} == {1}",chain.Left.ToString(),chain.Right.ToString()));
+                Parse(element, string.Format("{0} == {1}", chain.Left.ToString(), ParseRightHandValue(chain.Right).ToString()));
             }
+        }
+
+        private static object ParseRightHandValue(Expression operation)
+        {
+            if(operation.NodeType == ExpressionType.Constant)
+            {
+                return ((ConstantExpression)operation).Value;
+            }
+
+            else if (operation.NodeType == ExpressionType.MemberAccess)
+            {
+                MemberExpression me = (MemberExpression)operation;
+                object instance = ParseRightHandValue(me.Expression);
+                if (instance != null)
+                {
+                    if (me.Member.MemberType == MemberTypes.Field)
+                    {
+                        return ((FieldInfo)me.Member).GetValue(instance);
+                    }
+                    else if (me.Member.MemberType == MemberTypes.Property)
+                    {
+                        return ((PropertyInfo)me.Member).GetValue(instance, null);
+                    }
+                }
+            }
+            else if (operation.NodeType == ExpressionType.Call)
+            {
+                MethodCallExpression me = (MethodCallExpression)operation;
+                if(me.Method.GetCustomAttributes().Any(a => a.GetType() == typeof(ParserIgnoreAttribute)) == true)
+                {
+                    return me.ToString();
+                }
+                return Expression.Lambda(me).Compile().DynamicInvoke();
+            }
+
+            else if (operation.NodeType == ExpressionType.Equal)
+            {
+                BinaryExpression be = (BinaryExpression)operation;
+                var e = string.Format("{0} == {1}", be.Left.ToString(), ParseRightHandValue(be.Right).ToString());
+                return e;
+            }
+
+            else if (operation.NodeType == ExpressionType.Convert)
+            {
+                return operation.ToString();
+            }
+
+            return null;
         }
 
         public static void Parse(Element element, string expressionPart)

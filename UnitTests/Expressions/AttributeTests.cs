@@ -20,6 +20,16 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Attributes_Defined_By_Variables()
+        {
+            string myClass1 = "class";
+            string partialId = "_parent_child";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute("id").Contains(partialId) && e.Attribute(myClass1).Text == myClass1);
+
+            Assert.AreEqual("//td[@class='class1' and contains(@id,'_parent_child')]", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_With_One_Attribute_Containing_Text_And_Another_Attribute_With_Exact_Text()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute("id").Contains("_parent_child"));

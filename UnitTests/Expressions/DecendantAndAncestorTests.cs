@@ -28,6 +28,16 @@ namespace UnitTests.Expressions
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Element_With_Ancestor_Specified_Using_Variables()
+        {
+            string td = "td";
+            string table = "table";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == td && e.Ancestor.Name == table);
+
+            Assert.AreEqual("//td[ancestor::table]", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Element_With_Ancestor_And_Descendant()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Ancestor.Name == "table" && e.Descendant.Name == "div");

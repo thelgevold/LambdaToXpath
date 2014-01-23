@@ -44,6 +44,24 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Preceding_Sibling_And_Following_Sibling_And_Attribute_Using_Variables()
+        {
+            string aVal = "a";
+            string bVal = "b";
+            string cVal = "c";
+            string classVal = "class";
+
+            var xpath = CreateXpath.Where(e => e.TargetElementName == bVal && e.PrecedingSibling.Name == aVal && e.FollowingSibling.Name == cVal && e.Attribute("class").Text == GetClassName());
+
+            Assert.AreEqual("//b[@class='myClass' and following-sibling::c and preceding-sibling::a]", xpath);
+        }
+
+        private string GetClassName()
+        {
+            return "myClass";
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_With_Preceding_Sibling_And_Following_Sibling_And_Two_Attribute()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "b" && e.PrecedingSibling.Name == "a" && e.FollowingSibling.Name == "c" && e.Attribute("class").Text == "myClass" && e.Attribute("id").Contains("div_span"));

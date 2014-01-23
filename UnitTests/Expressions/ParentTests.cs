@@ -24,6 +24,15 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Element_With_Parent_Specified_Using_Variable()
+        {
+            string parent = "tr";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == parent);
+
+            Assert.AreEqual("//tr/td", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Element_With_Parent_With_Attribute_Containing_Text()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Attribute("id").Contains("_parent_child"));
@@ -35,6 +44,16 @@ namespace UnitTests
         public void Will_Generate_Xpath_For_Element_With_Parent_With_Attribute_With_Exact_Text()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Attribute("id").Text == "_parent_child");
+
+            Assert.AreEqual("//tr[@id='_parent_child']/td", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Element_With_Parent_With_Attribute_With_Exact_Text_All_Specified_Using_Attributes()
+        {
+            string text = "_parent_child";
+            string parentName = "tr";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == parentName && e.Parent.Attribute("id").Text == text);
 
             Assert.AreEqual("//tr[@id='_parent_child']/td", xpath);
         }
