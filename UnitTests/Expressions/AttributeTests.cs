@@ -19,6 +19,7 @@ namespace UnitTests
             Assert.AreEqual("//td[@class='class1' and contains(@id,'_parent_child')]", xpath);
         }
 
+        [ExpectedException(typeof(NotImplementedException))]
         [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_With_Attributes_Defined_By_Variables()
         {

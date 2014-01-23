@@ -56,6 +56,11 @@ namespace LambdaToXpath
                 MethodCallExpression me = (MethodCallExpression)operation;
                 if(me.Method.GetCustomAttributes().Any(a => a.GetType() == typeof(ParserIgnoreAttribute)) == true)
                 {
+                    if (me.Arguments.Any(a => a.NodeType == ExpressionType.MemberAccess) == true)
+                    {
+                        throw new NotImplementedException(string.Format("expressions or methods in attributes are not implemented yet"));
+                    }
+
                     return me.ToString();
                 }
                 return Expression.Lambda(me).Compile().DynamicInvoke();
