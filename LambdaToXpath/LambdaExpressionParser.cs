@@ -66,7 +66,7 @@ namespace LambdaToXpath
                     return ElementParser.ParseAttribute(me);
                 }
 
-                return Expression.Lambda(me).Compile().DynamicInvoke();
+                return InvokeExpression(me);
             }
 
             else if (operation.NodeType == ExpressionType.Equal)
@@ -79,35 +79,28 @@ namespace LambdaToXpath
 
             else if (operation.NodeType == ExpressionType.Convert)
             {
-                var value = Expression.Lambda(operation).Compile().DynamicInvoke();
+                var value = InvokeExpression(operation);
                 return Expression.Convert(Expression.Constant(value),value.GetType());
             }
 
             return null;
         }
 
-        public static void Parse(Element element, string expressionPart)
+        private static object InvokeExpression(Expression operation)
         {
-            bool done = ElementParser.ParseParent(element, expressionPart);
-
-            if (done == false)
-            {
-                done = ElementParser.ParseContextElement(element, expressionPart);
-            }
-            if (done == false)
-            {
-                done = ElementParser.ParseSiblings(element, expressionPart);
-            }
-            if (done == false)
-            {
-                done = ElementParser.ParsePosition(element, expressionPart);
-            }
-            if (done == false)
-            {
-                done = ElementParser.ParseRelatives(element, expressionPart);
-            }
+            return Expression.Lambda(operation).Compile().DynamicInvoke();
         }
 
-      
+        public static void Parse(Element element, string expressionPart)
+        {
+            foreach (var parser in ElementParser.GetAllParsers())
+            {
+                bool done = parser(element,expressionPart);
+                if (done == true)
+                {
+                    return;
+                }
+            }
+        }
     }
 }

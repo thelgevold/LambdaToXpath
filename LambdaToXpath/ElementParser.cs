@@ -46,6 +46,19 @@ namespace LambdaToXpath
             return string.Format("\"{0}\"", value); 
         }
 
+        public static List<Func<Element, string, bool>> GetAllParsers()
+        {
+            List<Func<Element, string, bool>> parsers = new List<Func<Element, string, bool>>();
+
+            parsers.Add((element, expressionPart) => ElementParser.ParseParent(element, expressionPart));
+            parsers.Add((element, expressionPart) => ElementParser.ParseContextElement(element, expressionPart));
+            parsers.Add((element, expressionPart) => ElementParser.ParseSiblings(element, expressionPart));
+            parsers.Add((element, expressionPart) => ElementParser.ParsePosition(element, expressionPart));
+            parsers.Add((element, expressionPart) => ElementParser.ParseRelatives(element, expressionPart));
+
+            return parsers;
+        }
+
         public static object ResolveFieldOrProperty(MemberExpression me,object instance)
         {
             if (me.Member.MemberType == MemberTypes.Field)
