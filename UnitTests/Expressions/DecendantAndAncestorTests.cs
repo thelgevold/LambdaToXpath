@@ -44,5 +44,16 @@ namespace UnitTests.Expressions
 
             Assert.AreEqual("//td[descendant::div and ancestor::table]", xpath);
         }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Element_With_Ancestor_And_Descendant_Specified_By_Variables()
+        {
+            string desc = "div";
+            string ancestor = "table";
+            string target = "td";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == target && e.Ancestor.Name == ancestor && e.Descendant.Name == desc);
+
+            Assert.AreEqual("//td[descendant::div and ancestor::table]", xpath);
+        }
     }
 }
