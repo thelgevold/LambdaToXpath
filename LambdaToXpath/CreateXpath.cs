@@ -14,7 +14,7 @@ namespace LambdaToXpath
         {
             Element element = new Element();
 
-            XpathExpressionParser.ParseExpression((BinaryExpression)exp.Body, element);
+            LambdaExpressionParser.ParseExpression((BinaryExpression)exp.Body, element);
 
             return XpathGenerator.ToXpathString(element);
         }

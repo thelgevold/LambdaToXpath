@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace LambdaToXpath
 {
-    public class XpathExpressionParser
+    public class LambdaExpressionParser
     {
         public static void ParseExpression(BinaryExpression chain, Element element)
         {
@@ -43,7 +43,7 @@ namespace LambdaToXpath
                 }
 
                 //Don't execute properties defined on internal objects 
-                if (me.Member.Module.Assembly.FullName == typeof(XpathExpressionParser).Assembly.FullName)
+                if (me.Member.Module.Assembly.FullName == typeof(LambdaExpressionParser).Assembly.FullName)
                 {
                     return operation;
                 }
