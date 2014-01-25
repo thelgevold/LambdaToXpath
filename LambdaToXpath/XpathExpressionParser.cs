@@ -42,7 +42,7 @@ namespace LambdaToXpath
                     return ElementParser.ParseAttribute(me);
                 }
 
-                //Don't execute functions defined on internal objects 
+                //Don't execute properties defined on internal objects 
                 if (me.Member.Module.Assembly.FullName == typeof(XpathExpressionParser).Assembly.FullName)
                 {
                     return operation;
