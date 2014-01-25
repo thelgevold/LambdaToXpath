@@ -58,6 +58,32 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Partial_Attribute_Defined_By_Variables4()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute(GetAttributeName()).Contains("displayNone"));
+
+            Assert.AreEqual("//td[contains(@id,'displayNone')]", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Partial_Attribute_Defined_By_Variables5()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute(GetAttributeName()).Contains(GetAttributeContent()));
+
+            Assert.AreEqual("//td[contains(@id,'displayNone')]", xpath);
+        }
+
+        private string GetAttributeName()
+        {
+            return "id";
+        }
+
+        private string GetAttributeContent()
+        {
+            return "displayNone";
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_With_One_Attribute_Containing_Text_And_Another_Attribute_With_Exact_Text()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute("id").Contains("_parent_child"));
