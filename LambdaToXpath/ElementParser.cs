@@ -69,13 +69,15 @@ namespace LambdaToXpath
             else if (operation.NodeType == ExpressionType.Equal)
             {
                 BinaryExpression be = (BinaryExpression)operation;
+                
                 var e = string.Format("{0} == {1}", be.Left.ToString(), ParseRightHandValue(be.Right).ToString());
                 return e;
             }
 
             else if (operation.NodeType == ExpressionType.Convert)
             {
-                return operation.ToString();
+                var value = Expression.Lambda(operation).Compile().DynamicInvoke();
+                return Expression.Convert(Expression.Constant(value),value.GetType());
             }
 
             return null;

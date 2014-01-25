@@ -24,6 +24,16 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Element_With_Parent_Specified_By_Variable()
+        {
+            string parentName = "tr";
+            string child = "td";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == child && e.Parent.Name == parentName);
+
+            Assert.AreEqual("//tr/td", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Element_With_Parent_Specified_Using_Variable()
         {
             string parent = "tr";
