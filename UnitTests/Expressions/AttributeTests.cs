@@ -19,15 +19,42 @@ namespace UnitTests
             Assert.AreEqual("//td[@class='class1' and contains(@id,'_parent_child')]", xpath);
         }
 
-        [ExpectedException(typeof(NotImplementedException))]
         [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_With_Attributes_Defined_By_Variables()
         {
-            string myClass1 = "class";
-            string partialId = "_parent_child";
-            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute("id").Contains(partialId) && e.Attribute(myClass1).Text == myClass1);
+            string myClass1 = "displayNone";
+            string attrName = "class";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute(attrName).Text == myClass1);
 
-            Assert.AreEqual("//td[@class='class1' and contains(@id,'_parent_child')]", xpath);
+            Assert.AreEqual("//td[@class='displayNone']", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Partial_Attribute_Defined_By_Variables1()
+        {
+            string myClass1 = "displayNone";
+            string attrName = "class";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute(attrName).Contains(myClass1));
+
+            Assert.AreEqual("//td[contains(@class,'displayNone')]", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Partial_Attribute_Defined_By_Variables2()
+        {
+            string myClass1 = "displayNone";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute("id").Contains(myClass1));
+
+            Assert.AreEqual("//td[contains(@id,'displayNone')]", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Partial_Attribute_Defined_By_Variables3()
+        {
+            string attrName = "id";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute(attrName).Contains("displayNone"));
+
+            Assert.AreEqual("//td[contains(@id,'displayNone')]", xpath);
         }
 
         [TestMethod]

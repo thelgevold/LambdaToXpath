@@ -40,8 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ElementParser.cs" />
+    <Compile Include="XpathExpressionParser.cs" />
     <Compile Include="CreateXpath.cs" />
-    <Compile Include="Model\ParserIgnoreAttribute.cs" />
     <Compile Include="Model\Relative.cs" />
     <Compile Include="Model\Attribute.cs" />
     <Compile Include="Model\Element.cs" />

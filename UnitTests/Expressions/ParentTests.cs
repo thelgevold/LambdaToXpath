@@ -59,6 +59,18 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Element_With_Parent_With_Attribute_With_Exact_Text_Specififed_By_Attributes()
+        {
+            string attrText = "_parent_child";
+            string attrName = "id";
+            string parentName = "tr";
+            string targetName = "td";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == targetName && e.Parent.Name == parentName && e.Parent.Attribute(attrName).Text == attrText);
+
+            Assert.AreEqual("//tr[@id='_parent_child']/td", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Element_With_Parent_With_Attribute_With_Exact_Text_All_Specified_Using_Attributes()
         {
             string text = "_parent_child";
