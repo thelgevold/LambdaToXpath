@@ -20,11 +20,32 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Following_Sibling_Specified_By_Attributes()
+        {
+            string siblingName = "td2";
+            string elementName = "td1";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == elementName && e.FollowingSibling.Name == siblingName);
+
+            Assert.AreEqual("//td1[following-sibling::td2]", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_With_Preceding_Sibling()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.PrecedingSibling.Name == "td");
 
             Assert.AreEqual("//td[preceding-sibling::td]", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Preceding_Sibling_Specified_By_Attributes()
+        {
+            string siblingName = "td2";
+            string elementName = "td1";
+
+            var xpath = CreateXpath.Where(e => e.TargetElementName == elementName && e.PrecedingSibling.Name == siblingName);
+
+            Assert.AreEqual("//td1[preceding-sibling::td2]", xpath);
         }
 
         [TestMethod]
