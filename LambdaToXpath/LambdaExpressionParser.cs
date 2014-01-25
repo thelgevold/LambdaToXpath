@@ -16,13 +16,14 @@ namespace LambdaToXpath
         {
             if (chain.Left is BinaryExpression)
             {
-                Parse(element, ParseSubExpressions(chain.Right).ToString());
-
+                Parse(element, (ExpressionTerm)ParseSubExpressions(chain.Right));
                 ParseExpression((BinaryExpression)chain.Left, element);
             }
             else
             {
-                Parse(element, string.Format("{0} == {1}", chain.Left.ToString(), ParseSubExpressions(chain.Right).ToString()));
+                ExpressionTerm expressionTerm = (ExpressionTerm)ParseSubExpressions(chain.Right);
+                expressionTerm.Function = chain.Left.ToString();
+                Parse(element, expressionTerm);
             }
         }
 
@@ -30,7 +31,14 @@ namespace LambdaToXpath
         {
             if(operation.NodeType == ExpressionType.Constant)
             {
-                return ((ConstantExpression)operation).Value;
+                var constant = ((ConstantExpression)operation).Value;
+
+                if (constant is string)
+                {
+                    return new ExpressionTerm() { Value = constant.ToString() };
+                }
+
+                return constant;               
             }
 
             else if (operation.NodeType == ExpressionType.MemberAccess)
@@ -52,7 +60,14 @@ namespace LambdaToXpath
                 object instance = ParseSubExpressions(me.Expression);
                 if (instance != null)
                 {
-                    return ElementParser.ResolveFieldOrProperty(me, instance);
+                    var retValue = ElementParser.ResolveFieldOrProperty(me, instance);
+
+                    if (retValue is string)
+                    {
+                        return new ExpressionTerm() { Value = retValue.ToString() };
+                    }
+
+                    return retValue;
                 }
 
                 return operation.ToString();
@@ -66,21 +81,65 @@ namespace LambdaToXpath
                     return ElementParser.ParseAttribute(me);
                 }
 
-                return InvokeExpression(me);
+                return new ExpressionTerm() { Value = InvokeExpression(me).ToString() };
             }
 
             else if (operation.NodeType == ExpressionType.Equal)
             {
                 BinaryExpression be = (BinaryExpression)operation;
 
-                var e = string.Format("{0} == {1}", ParseSubExpressions(be.Left).ToString(), ParseSubExpressions(be.Right).ToString());
-                return e;
+                be = (BinaryExpression)be.ReduceExtensions();
+
+                string functionName = null;
+                var leftExpression = ParseSubExpressions(be.Left);
+                string functionArgument = null;
+
+                if (leftExpression is ExpressionTerm)
+                {
+                    var expr = (ExpressionTerm)leftExpression;
+                    functionName = expr.Function;
+                    functionArgument = expr.FunctionArgument;
+                }
+                else
+                {
+                    functionName = leftExpression.ToString();
+                }
+
+                string value = null;
+
+                var rightExpression = ParseSubExpressions(be.Right);
+
+                if (rightExpression is string)
+                {
+                    value = rightExpression.ToString();
+                }
+                if (rightExpression is ExpressionTerm)
+                {
+                    var expr = (ExpressionTerm)rightExpression;
+                    value = expr.Value;
+                    
+                }
+                else
+                {
+                    //Ignore == true/false in expressions
+                    if (rightExpression.GetType() == typeof(bool))
+                    {
+                        value = ((ExpressionTerm)leftExpression).Value;
+                    }
+                    else
+                    {
+                        value = rightExpression.ToString();
+                    }
+                }
+
+                return new ExpressionTerm() { Function = functionName, Value = value,FunctionArgument = functionArgument };
             }
 
             else if (operation.NodeType == ExpressionType.Convert)
             {
                 var value = InvokeExpression(operation);
-                return Expression.Convert(Expression.Constant(value),value.GetType());
+                //var expre = Expression.Convert(Expression.Constant(value),value.GetType());
+                return new ExpressionTerm() { Value = value.ToString() };
             }
 
             return null;
@@ -91,11 +150,11 @@ namespace LambdaToXpath
             return Expression.Lambda(operation).Compile().DynamicInvoke();
         }
 
-        public static void Parse(Element element, string expressionPart)
+        public static void Parse(Element element, ExpressionTerm expressionTerm)
         {
             foreach (var parser in ElementParser.GetAllParsers())
             {
-                bool done = parser(element,expressionPart);
+                bool done = parser(element, expressionTerm);
                 if (done == true)
                 {
                     return;

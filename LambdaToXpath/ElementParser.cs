@@ -14,7 +14,12 @@ namespace LambdaToXpath
     {
         private static string extractMethodArguments = @"(?<=\().+?(?=\))";
 
-        public static string ParseAttribute(MethodCallExpression me)
+        /// <summary>
+        /// .Attribute(..).Contains(..)
+        /// </summary>
+        /// <param name="me"></param>
+        /// <returns></returns>
+        public static ExpressionTerm ParseAttribute(MethodCallExpression me)
         {
             var containsExpr = me.Arguments.Single();
             var containsValue = Expression.Lambda(containsExpr).Compile().DynamicInvoke().ToString();
@@ -24,21 +29,28 @@ namespace LambdaToXpath
             var attrNameExpr = attribute.Arguments.Single();
             var attributeNameValue = Expression.Lambda(attrNameExpr).Compile().DynamicInvoke().ToString();
             
-
             string expression = me.ToString().Replace(containsExpr.ToString(), SurroundByQuotes(containsValue)).Replace(attrNameExpr.ToString(), SurroundByQuotes(attributeNameValue));
-            return expression;
+
+            return new ExpressionTerm { Function = expression, Value = containsValue, FunctionArgument = attributeNameValue };
         }
 
-        public static string ParseAttribute(MemberExpression me)
+        /// <summary>
+        /// .Attribute(..).Text = ""
+        /// </summary>
+        /// <param name="me"></param>
+        /// <returns></returns>
+        public static ExpressionTerm ParseAttribute(MemberExpression me)
         {
             var attributeFunction = (MethodCallExpression)me.Expression;
             var value = Expression.Lambda(attributeFunction.Arguments[0]).Compile().DynamicInvoke();
+
+            string argument = value.ToString();
 
             value = string.Format("\"{0}\"", value);
 
             var expression = me.ToString().Replace(attributeFunction.Arguments[0].ToString(), value.ToString());
 
-            return expression;
+            return new ExpressionTerm() {Function = expression,Value = value.ToString(),FunctionArgument = argument };
         }
 
         private static string SurroundByQuotes(string value)
@@ -46,15 +58,15 @@ namespace LambdaToXpath
             return string.Format("\"{0}\"", value); 
         }
 
-        public static List<Func<Element, string, bool>> GetAllParsers()
+        public static List<Func<Element, ExpressionTerm, bool>> GetAllParsers()
         {
-            List<Func<Element, string, bool>> parsers = new List<Func<Element, string, bool>>();
+            List<Func<Element, ExpressionTerm, bool>> parsers = new List<Func<Element, ExpressionTerm, bool>>();
 
-            parsers.Add((element, expressionPart) => ElementParser.ParseParent(element, expressionPart));
-            parsers.Add((element, expressionPart) => ElementParser.ParseContextElement(element, expressionPart));
-            parsers.Add((element, expressionPart) => ElementParser.ParseSiblings(element, expressionPart));
-            parsers.Add((element, expressionPart) => ElementParser.ParsePosition(element, expressionPart));
-            parsers.Add((element, expressionPart) => ElementParser.ParseRelatives(element, expressionPart));
+            parsers.Add((element, expressionTerm) => ElementParser.ParseParent(element, expressionTerm));
+            parsers.Add((element, expressionTerm) => ElementParser.ParseContextElement(element, expressionTerm));
+            parsers.Add((element, expressionTerm) => ElementParser.ParseSiblings(element, expressionTerm));
+            parsers.Add((element, expressionTerm) => ElementParser.ParsePosition(element, expressionTerm));
+            parsers.Add((element, expressionTerm) => ElementParser.ParseRelatives(element, expressionTerm));
 
             return parsers;
         }
@@ -73,100 +85,94 @@ namespace LambdaToXpath
             return null;
         }
 
-        public static bool ParseSiblings(Element element, string expressionPart)
+        public static bool ParseSiblings(Element element, ExpressionTerm expressionPart)
         {
-            if (expressionPart.Contains(".FollowingSibling.Name") == true)
+            if (expressionPart.IsValidFunctionByName(".FollowingSibling.Name") == true)
             {
-                element.Siblings.Add(new Sibling() { Name = GetValue(expressionPart) });
+                element.Siblings.Add(new Sibling() { Name = expressionPart.Value });
                 return true;
             }
-            else if (expressionPart.Contains(".PrecedingSibling.Name") == true)
+            else if (expressionPart.IsValidFunctionByName(".PrecedingSibling.Name") == true)
             {
-                element.Siblings.Add(new Sibling() { Name = GetValue(expressionPart), Preceding = true });
+                element.Siblings.Add(new Sibling() { Name = expressionPart.Value, Preceding = true });
                 return true;
             }
 
             return false;
         }
 
-        public static bool ParseContextElement(Element element, string expressionPart)
+        public static bool ParseContextElement(Element element, ExpressionTerm expressionPart)
         {
-            if (expressionPart.Contains(".TargetElementName") == true)
+            if (expressionPart.IsValidFunctionByName(".TargetElementName") == true)
             {
-                element.TargetElementName = GetValue(expressionPart);
+                element.TargetElementName = expressionPart.Value;
                 return true;
             }
-            else if (Regex.IsMatch(expressionPart, "Attribute(.*)\\.Text") == true)
+            else if (expressionPart.IsValidFunctionByRegex("Attribute(.*)\\.Text") == true)
             {
-                var keyVal = GetAttributeNameAndValue(expressionPart);
-                element.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value), ExactMatch = true });
+                element.Attributes.Add(new Model.Attribute(expressionPart.FunctionArgument) { Text = expressionPart.Value, ExactMatch = true });
                 return true;
             }
-            else if (Regex.IsMatch(expressionPart, "Attribute(.*)\\.Contains") == true)
+            else if (expressionPart.IsValidFunctionByRegex("Attribute(.*)\\.Contains") == true)
             {
-                var keyVal = GetAttributeNameAndContainedText(expressionPart);
-                element.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value) });
+                element.Attributes.Add(new Model.Attribute(expressionPart.FunctionArgument) { Text = expressionPart.Value });
                 return true;
             }
 
             return false;
         }
 
-        public static bool ParseRelatives(Element element, string expressionPart)
+        public static bool ParseRelatives(Element element, ExpressionTerm expressionPart)
         {
-            if (expressionPart.Contains(".Descendant") == true)
+            if (expressionPart.IsValidFunctionByName(".Descendant") == true)
             {
-                element.Relatives.Add(new Relative() { Descendant = true, Name = GetValue(expressionPart) });
+                element.Relatives.Add(new Relative() { Descendant = true, Name = expressionPart.Value });
                 return true;
             }
 
-            if (expressionPart.Contains(".Ancestor") == true)
+            if (expressionPart.IsValidFunctionByName(".Ancestor") == true)
             {
-                element.Relatives.Add(new Relative() { Descendant = false, Name = GetValue(expressionPart) });
-                return true;
-            }
-
-            return false;
-        }
-
-        public static bool ParsePosition(Element element, string expressionPart)
-        {
-            if (expressionPart.Contains(".Position") == true)
-            {
-                var matches = Regex.Matches(expressionPart.Trim('('), extractMethodArguments);
-                element.Position = Int32.Parse(CleanUp(matches[0].Value));
+                element.Relatives.Add(new Relative() { Descendant = false, Name = expressionPart.Value });
                 return true;
             }
 
             return false;
         }
 
-        public static bool ParseParent(Element element, string expressionPart)
+        public static bool ParsePosition(Element element, ExpressionTerm expressionPart)
         {
-            if (expressionPart.Contains("Parent.Name") == true)
+            if (expressionPart.IsValidFunctionByName(".Position") == true)
+            {
+                element.Position = Int32.Parse(expressionPart.Value);
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool ParseParent(Element element, ExpressionTerm expressionPart)
+        {
+            if (expressionPart.IsValidFunctionByName("Parent.Name") == true)
             {
                 EnsureParent(element);
-                element.Parent.Name = GetValue(expressionPart);
+                element.Parent.Name = expressionPart.Value;
                 return true;
             }
-            else if (Regex.IsMatch(expressionPart, "Parent.Attribute(.*)\\.Contains") == true)
+            else if (expressionPart.IsValidFunctionByRegex("Parent.Attribute(.*)\\.Contains") == true)
             {
                 EnsureParent(element);
-                var keyVal = GetAttributeNameAndContainedText(expressionPart);
-                element.Parent.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value) });
+                element.Parent.Attributes.Add(new Model.Attribute(expressionPart.FunctionArgument) { Text = expressionPart.Value });
                 return true;
             }
-            else if (Regex.IsMatch(expressionPart, "Parent.Attribute(.*)\\.Text") == true)
+            else if (expressionPart.IsValidFunctionByRegex("Parent.Attribute(.*)\\.Text") == true)
             {
                 EnsureParent(element);
-                var keyVal = GetAttributeNameAndValue(expressionPart);
-                element.Parent.Attributes.Add(new Model.Attribute(keyVal.Key) { Text = CleanUp(keyVal.Value), ExactMatch = true });
+                element.Parent.Attributes.Add(new Model.Attribute(expressionPart.FunctionArgument) { Text = expressionPart.Value, ExactMatch = true });
                 return true;
             }
-            else if (expressionPart.Contains("Parent.Position") == true)
+            else if (expressionPart.IsValidFunctionByName("Parent.Position") == true)
             {
-                var matches = Regex.Matches(expressionPart.Trim('('), extractMethodArguments);
-                element.Parent.Position = Int32.Parse(CleanUp(matches[0].Value));
+                element.Parent.Position = Int32.Parse(expressionPart.Value);
                 return true;
             }
 
@@ -179,41 +185,6 @@ namespace LambdaToXpath
             {
                 element.Parent = new Parent();
             }
-        }
-
-        public static KeyValuePair<string, string> GetAttributeNameAndContainedText(string expressionPart)
-        {
-            var matches = Regex.Matches(expressionPart.Trim('('), extractMethodArguments);
-
-            return new KeyValuePair<string, string>(CleanUp(matches[0].Value), CleanUp(matches[1].Value));
-        }
-
-        public static KeyValuePair<string, string> GetAttributeNameAndValue(string expressionPart)
-        {
-            var temp = expressionPart.Split("==".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-            var attributeName = Regex.Match(expressionPart.Trim(')', '('), extractMethodArguments).Value;
-
-            return new KeyValuePair<string, string>(CleanUp(attributeName), CleanUp(temp[1]));
-        }
-
-        public static string GetValue(string expressionPart)
-        {
-            var temp = expressionPart.Split("==".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-            string name = temp[0];
-
-            if (temp.Length == 2)
-            {
-                name = temp[1];
-            }
-
-            return CleanUp(name);
-        }
-
-        public static string CleanUp(string raw)
-        {
-            return raw.Trim().Trim(')').Trim('\\').Trim('"');
         }
     }
 }

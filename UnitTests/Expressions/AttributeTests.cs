@@ -92,9 +92,37 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void Will_Generate_Xpath_For_Simple_Element_With_Multiple_Attributes_Containing_Text()
+        public void Will_Generate_Xpath_For_Simple_Element_With_Multiple_Attributes_Containing_Text1()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute("id").Contains("_parent_child") == true && e.Attribute("class").Contains("myClass") == true);
+
+            Assert.AreEqual("//td[contains(@class,'myClass') and contains(@id,'_parent_child')]", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Multiple_Attributes_Containing_Text2()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute("id").Contains("_parent_child") && e.Attribute("class").Contains("myClass"));
+
+            Assert.AreEqual("//td[contains(@class,'myClass') and contains(@id,'_parent_child')]", xpath);
+        }
+
+        //"Not implemented yet"
+        [Ignore]
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Multiple_Attributes_Containing_Text3()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute("id").Contains("_parent_child") == false && e.Attribute("class").Contains("myClass") == false);
+
+            Assert.AreEqual("//td[contains(@class,'myClass') and contains(@id,'_parent_child')]", xpath);
+        }
+
+        //"Not implemented yet"
+        [Ignore]
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Multiple_Attributes_Containing_Text4()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && !e.Attribute("id").Contains("_parent_child") && !e.Attribute("class").Contains("myClass"));
 
             Assert.AreEqual("//td[contains(@class,'myClass') and contains(@id,'_parent_child')]", xpath);
         }
