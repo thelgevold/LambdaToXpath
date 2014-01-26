@@ -138,7 +138,6 @@ namespace LambdaToXpath
             else if (operation.NodeType == ExpressionType.Convert)
             {
                 var value = InvokeExpression(operation);
-                //var expre = Expression.Convert(Expression.Constant(value),value.GetType());
                 return new ExpressionTerm() { Value = value.ToString() };
             }
 
