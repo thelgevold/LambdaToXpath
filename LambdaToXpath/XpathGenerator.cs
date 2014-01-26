@@ -64,6 +64,12 @@ namespace LambdaToXpath
                     xpath.Append(string.Join(" and ", element.Relatives.Select(r => GetRelativePart(r))));
                 }
 
+                if (element.TargetElementText != null)
+                {
+                    xpath.Append(EnsureAndOperator(element.Attributes.Count, element.Siblings.Count, element.Position ?? 0, element.Relatives.Count));
+                    xpath.Append(string.Format("text()='{0}'",element.TargetElementText));
+                }
+
                 xpath.Append("]");
             }
             return xpath.ToString();

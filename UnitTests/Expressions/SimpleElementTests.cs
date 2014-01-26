@@ -29,6 +29,15 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Text()
+        {
+            string tdElement = "td";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == tdElement && e.TargetElementText == "my test");
+
+            Assert.AreEqual("//td[text()='my test']", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_Specified_By_A_Variable_Inside_Another_Object()
         {
             TestClass testClass = new TestClass();

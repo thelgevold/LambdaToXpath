@@ -12,8 +12,6 @@ namespace LambdaToXpath
 {
     public static class ElementParser
     {
-        private static string extractMethodArguments = @"(?<=\().+?(?=\))";
-
         /// <summary>
         /// .Attribute(..).Contains(..)
         /// </summary>
@@ -106,6 +104,11 @@ namespace LambdaToXpath
             if (expressionPart.IsValidFunctionByName(".TargetElementName") == true)
             {
                 element.TargetElementName = expressionPart.Value;
+                return true;
+            }
+            else if (expressionPart.IsValidFunctionByName(".TargetElementText") == true)
+            {
+                element.TargetElementText = expressionPart.Value;
                 return true;
             }
             else if (expressionPart.IsValidFunctionByRegex("Attribute(.*)\\.Text") == true)

@@ -17,6 +17,8 @@ namespace LambdaToXpath.Model
 
         public string TargetElementName { get; set; }
 
+        public string TargetElementText { get; set; }
+
         public Parent Parent { get; set; }
 
         public Relative Descendant { get; set; }
@@ -44,7 +46,7 @@ namespace LambdaToXpath.Model
         {
             get 
             {
-                return (Attributes.Count + Siblings.Count + (Position ?? 0) + Relatives.Count > 0); 
+                return (Attributes.Count + Siblings.Count + (Position ?? 0) + Relatives.Count + (TargetElementText ?? string.Empty).Length > 0) ; 
             }
         }
     }
