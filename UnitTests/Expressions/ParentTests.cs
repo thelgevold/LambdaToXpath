@@ -32,6 +32,14 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Element_With_Parent_With_Text_And_Position_And_Attribute()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Text == "test" && e.Parent.Position == 5 && e.Parent.Attribute("id").Text == "parent");
+
+            Assert.AreEqual("//tr[@id='parent' and text()='test' and position()=5]/td", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Element_With_Parent_Specified_By_Variable()
         {
             string parentName = "tr";
