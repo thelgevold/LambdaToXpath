@@ -161,6 +161,12 @@ namespace LambdaToXpath
                 element.Parent.Name = expressionPart.Value;
                 return true;
             }
+            else if (expressionPart.IsValidFunctionByName("Parent.Text") == true)
+            {
+                EnsureParent(element);
+                element.Parent.Text = expressionPart.Value;
+                return true;
+            }
             else if (expressionPart.IsValidFunctionByRegex("Parent.Attribute(.*)\\.Contains") == true)
             {
                 EnsureParent(element);

@@ -25,9 +25,14 @@ namespace LambdaToXpath
                     {
                         xpath.Append(string.Join(" and ", element.Parent.Attributes.Select(a => GetAttributePart(a))));
                     }
-                    if (element.Parent.Position.HasValue == true)
+                    if (element.Parent.Text != null)
                     {
                         xpath.Append(EnsureAndOperator(element.Parent.Attributes.Count));
+                        xpath.Append(string.Format("text()='{0}'", element.Parent.Text));
+                    }
+                    if (element.Parent.Position.HasValue == true)
+                    {
+                        xpath.Append(EnsureAndOperator(element.Parent.Attributes.Count,(element.Parent.Text ?? string.Empty).Length));
                         xpath.Append(string.Format("position()={0}", element.Parent.Position.Value));
                     }
                     xpath.Append("]");

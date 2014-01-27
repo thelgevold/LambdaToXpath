@@ -15,6 +15,8 @@ namespace LambdaToXpath.Model
 
         public string Name { get; set; }
 
+        public string Text { get; set; }
+
         public int? Position { get; set; }
 
         public Attribute Attribute(string name)
@@ -24,6 +26,6 @@ namespace LambdaToXpath.Model
 
         internal List<Attribute> Attributes { get; set; }
 
-        public bool ElementHasConditions { get { return Attributes.Count + (Position ?? 0) > 0; } }
+        public bool ElementHasConditions { get { return Attributes.Count + (Position ?? 0) + (Text ?? string.Empty).Length > 0; } }
     }
 }
