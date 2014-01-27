@@ -31,122 +31,141 @@ namespace LambdaToXpath
         {
             if(operation.NodeType == ExpressionType.Constant)
             {
-                var constant = ((ConstantExpression)operation).Value;
-
-                if (constant is string)
-                {
-                    return new ExpressionTerm() { Value = constant.ToString() };
-                }
-
-                return constant;               
+                return GetConstant(operation);
             }
 
             else if (operation.NodeType == ExpressionType.MemberAccess)
             {
-                MemberExpression me = (MemberExpression)operation;
-
-                if (me.Expression.Type == typeof(Model.Attribute))
-                {
-                    return ElementParser.ParseAttribute(me);
-                }
-
-                //Don't execute properties defined on internal objects 
-                if (me.Member.Module.Assembly.FullName == typeof(LambdaExpressionParser).Assembly.FullName)
-                {
-                    return operation;
-                }
-
-                //Evaluate values of variables/properties
-                object instance = ParseSubExpressions(me.Expression);
-                if (instance != null)
-                {
-                    var retValue = ElementParser.ResolveFieldOrProperty(me, instance);
-
-                    if (retValue is string)
-                    {
-                        return new ExpressionTerm() { Value = retValue.ToString() };
-                    }
-
-                    return retValue;
-                }
-
-                return operation.ToString();
+                return ParseMemberAccessExpression(operation);
             }
             else if (operation.NodeType == ExpressionType.Call)
             {
-                MethodCallExpression me = (MethodCallExpression)operation;
-
-                if (me.Object != null && me.Object.Type == typeof(Model.Attribute))
-                {
-                    return ElementParser.ParseAttribute(me);
-                }
-
-                return new ExpressionTerm() { Value = InvokeExpression(me).ToString() };
+               return CallMethod(operation);
             }
 
             else if (operation.NodeType == ExpressionType.Equal)
             {
-                BinaryExpression be = (BinaryExpression)operation;
-
-                be = (BinaryExpression)be.ReduceExtensions();
-
-                string functionName = null;
-                var leftExpression = ParseSubExpressions(be.Left);
-                string functionArgument = null;
-
-                if (leftExpression is ExpressionTerm)
-                {
-                    var expr = (ExpressionTerm)leftExpression;
-                    functionName = expr.Function;
-                    functionArgument = expr.FunctionArgument;
-                }
-                else
-                {
-                    functionName = leftExpression.ToString();
-                }
-
-                string value = null;
-
-                var rightExpression = ParseSubExpressions(be.Right);
-
-                if (rightExpression is string)
-                {
-                    value = rightExpression.ToString();
-                }
-                if (rightExpression is ExpressionTerm)
-                {
-                    var expr = (ExpressionTerm)rightExpression;
-                    value = expr.Value;
-                    
-                }
-                else
-                {
-                    //Ignore == true/false in expressions
-                    if (rightExpression.GetType() == typeof(bool))
-                    {
-                        value = ((ExpressionTerm)leftExpression).Value;
-                    }
-                    else
-                    {
-                        value = rightExpression.ToString();
-                    }
-                }
-
-                return new ExpressionTerm() { Function = functionName, Value = value,FunctionArgument = functionArgument };
+                return ParseEqualityExpression(operation);
             }
 
             else if (operation.NodeType == ExpressionType.Convert)
             {
-                var value = InvokeExpression(operation);
+                UnaryExpression me = (UnaryExpression)operation;
+                
+                var value = InvokeExpression(me.Operand);
                 return new ExpressionTerm() { Value = value.ToString() };
             }
 
             return null;
         }
 
+        private static object ParseMemberAccessExpression(Expression operation)
+        {
+            MemberExpression me = (MemberExpression)operation;
+
+            if (me.Expression.Type == typeof(Model.Attribute))
+            {
+                return ElementParser.ParseAttribute(me);
+            }
+
+            //Don't execute properties defined on internal objects 
+            if (me.Member.Module.Assembly.FullName == typeof(LambdaExpressionParser).Assembly.FullName)
+            {
+                return operation;
+            }
+
+            //Evaluate values of variables/properties
+            object instance = ParseSubExpressions(me.Expression);
+            if (instance != null)
+            {
+                var retValue = ElementParser.ResolveFieldOrProperty(me, instance);
+
+                if (retValue is string)
+                {
+                    return new ExpressionTerm() { Value = retValue.ToString() };
+                }
+
+                return retValue;
+            }
+
+            return operation.ToString();
+        }
+
+
+        private static ExpressionTerm ParseEqualityExpression(Expression operation)
+        {
+            BinaryExpression be = (BinaryExpression)operation;
+
+            string functionName = null;
+            var leftExpression = ParseSubExpressions(be.Left);
+            string functionArgument = null;
+
+            if (leftExpression is ExpressionTerm)
+            {
+                var expr = (ExpressionTerm)leftExpression;
+                functionName = expr.Function;
+                functionArgument = expr.FunctionArgument;
+            }
+            else
+            {
+                functionName = leftExpression.ToString();
+            }
+
+            string value = null;
+
+            var rightExpression = ParseSubExpressions(be.Right);
+
+            if (rightExpression is string)
+            {
+                value = rightExpression.ToString();
+            }
+            if (rightExpression is ExpressionTerm)
+            {
+                var expr = (ExpressionTerm)rightExpression;
+                value = expr.Value;
+            }
+            else
+            {
+                //Ignore == true/false in expressions
+                if (rightExpression.GetType() == typeof(bool))
+                {
+                    value = ((ExpressionTerm)leftExpression).Value;
+                }
+                else
+                {
+                    value = rightExpression.ToString();
+                }
+            }
+            return new ExpressionTerm() { Function = functionName, Value = value, FunctionArgument = functionArgument };
+        }
+
         private static object InvokeExpression(Expression operation)
         {
             return Expression.Lambda(operation).Compile().DynamicInvoke();
+        }
+
+        private static object GetConstant(Expression operation)
+        {
+            var constant = ((ConstantExpression)operation).Value;
+
+            if (constant is string)
+            {
+                return new ExpressionTerm() { Value = constant.ToString() };
+            }
+
+            return constant;               
+        }
+
+        private static ExpressionTerm CallMethod(Expression operation)
+        {
+            MethodCallExpression me = (MethodCallExpression)operation;
+
+            if (me.Object != null && me.Object.Type == typeof(Model.Attribute))
+            {
+                return ElementParser.ParseAttribute(me);
+            }
+
+            return new ExpressionTerm() { Value = InvokeExpression(me).ToString() };
         }
 
         public static void Parse(Element element, ExpressionTerm expressionTerm)
