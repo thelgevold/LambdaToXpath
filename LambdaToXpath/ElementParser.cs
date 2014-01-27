@@ -106,9 +106,10 @@ namespace LambdaToXpath
                 element.TargetElementName = expressionPart.Value;
                 return true;
             }
-            else if (expressionPart.IsValidFunctionByName(".TargetElementText") == true)
+            else if (expressionPart.IsValidFunctionByName("TargetElementText") == true)
             {
                 element.TargetElementText = expressionPart.Value;
+                element.TextContainsFunction = expressionPart.FunctionArgument == "Contains";
                 return true;
             }
             else if (expressionPart.IsValidFunctionByRegex("Attribute(.*)\\.Text") == true)

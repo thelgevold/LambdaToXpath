@@ -19,6 +19,8 @@ namespace LambdaToXpath.Model
 
         public string TargetElementText { get; set; }
 
+        public bool TextContainsFunction { get; set; } 
+
         public Parent Parent { get; set; }
 
         public Relative Descendant { get; set; }

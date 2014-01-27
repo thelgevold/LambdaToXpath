@@ -156,10 +156,18 @@ namespace LambdaToXpath
             return constant;               
         }
 
-        private static ExpressionTerm CallMethod(Expression operation)
+        private static object CallMethod(Expression operation)
         {
             MethodCallExpression me = (MethodCallExpression)operation;
-
+            
+            var mex = me.Object as MemberExpression;
+            
+            if (mex != null && mex.Member.Name == "TargetElementText")
+            {
+                var text = Expression.Lambda(me.Arguments[0]).Compile().DynamicInvoke().ToString();
+                return new ExpressionTerm() { Value = text, Function = "TargetElementText",FunctionArgument="Contains" };
+            }
+            
             if (me.Object != null && me.Object.Type == typeof(Model.Attribute))
             {
                 return ElementParser.ParseAttribute(me);

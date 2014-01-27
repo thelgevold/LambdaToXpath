@@ -72,7 +72,7 @@ namespace LambdaToXpath
                 if (element.TargetElementText != null)
                 {
                     xpath.Append(EnsureAndOperator(element.Attributes.Count, element.Siblings.Count, element.Position ?? 0, element.Relatives.Count));
-                    xpath.Append(string.Format("text()='{0}'",element.TargetElementText));
+                    xpath.Append(GetTextPart(element.TargetElementText,element.TextContainsFunction));
                 }
 
                 xpath.Append("]");
@@ -108,6 +108,16 @@ namespace LambdaToXpath
             }
 
             return string.Format("following-sibling::{0}", s.Name);
+        }
+
+        private static string GetTextPart(string text, bool contains)
+        {
+            if (contains == true)
+            {
+                return string.Format("contains(text(),'{0}')", text);
+            }
+
+            return string.Format("text()='{0}'",text);
         }
 
         private static string GetAttributePart(Model.Attribute a)
