@@ -161,11 +161,18 @@ namespace LambdaToXpath
             MethodCallExpression me = (MethodCallExpression)operation;
             
             var mex = me.Object as MemberExpression;
-            
-            if (mex != null && mex.Member.Name == "TargetElementText")
+
+            if (mex != null &&mex.Member != null && (mex.Member.Name == "TargetElementText" || mex.Member.Name == "Text"))
             {
+                string textFunction = "TargetElementText";
+
+                if (mex.Member.Name == "Text")
+                {
+                    textFunction = "Parent.Text";
+                }
+
                 var text = Expression.Lambda(me.Arguments[0]).Compile().DynamicInvoke().ToString();
-                return new ExpressionTerm() { Value = text, Function = "TargetElementText",FunctionArgument="Contains" };
+                return new ExpressionTerm() { Value = text, Function = textFunction, FunctionArgument = "Contains" };
             }
             
             if (me.Object != null && me.Object.Type == typeof(Model.Attribute))

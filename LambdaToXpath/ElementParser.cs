@@ -166,6 +166,7 @@ namespace LambdaToXpath
             {
                 EnsureParent(element);
                 element.Parent.Text = expressionPart.Value;
+                element.Parent.TextContainsFunction = expressionPart.FunctionArgument == "Contains";
                 return true;
             }
             else if (expressionPart.IsValidFunctionByRegex("Parent.Attribute(.*)\\.Contains") == true)

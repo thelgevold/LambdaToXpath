@@ -28,7 +28,7 @@ namespace LambdaToXpath
                     if (element.Parent.Text != null)
                     {
                         xpath.Append(EnsureAndOperator(element.Parent.Attributes.Count));
-                        xpath.Append(string.Format("text()='{0}'", element.Parent.Text));
+                        xpath.Append(GetTextPart(element.Parent.Text, element.Parent.TextContainsFunction));
                     }
                     if (element.Parent.Position.HasValue == true)
                     {
