@@ -197,5 +197,21 @@ namespace LambdaToXpath
                 element.Parent = new Parent();
             }
         }
+
+        public static void ThrowIfNotSupported(BinaryExpression expr)
+        {
+            var whiteList = new List<ExpressionType>();
+            whiteList.Add(ExpressionType.Constant);
+            whiteList.Add(ExpressionType.Call);
+            whiteList.Add(ExpressionType.Equal);
+            whiteList.Add(ExpressionType.Convert);
+            whiteList.Add(ExpressionType.AndAlso);
+            whiteList.Add(ExpressionType.MemberAccess);
+
+            if (whiteList.Contains(expr.NodeType) == false || whiteList.Contains(expr.Left.NodeType) == false || whiteList.Contains(expr.Right.NodeType) == false)
+            {
+                throw new NotSupportedException(string.Format("{0} expressions are not supported", expr.NodeType));
+            }
+        }
     }
 }
