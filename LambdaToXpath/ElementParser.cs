@@ -172,7 +172,7 @@ namespace LambdaToXpath
             else if (expressionPart.IsValidFunctionByRegex("Parent.Attribute(.*)\\.Contains") == true)
             {
                 EnsureParent(element);
-                element.Parent.Attributes.Add(new Model.Attribute(expressionPart.FunctionArgument) { Text = expressionPart.Value });
+                element.Parent.Attributes.Add(new Model.Attribute(expressionPart.FunctionArgument) { Text = expressionPart.Value, Equal = expressionPart.ExpressionBooleanCondition });
                 return true;
             }
             else if (expressionPart.IsValidFunctionByRegex("Parent.Attribute(.*)\\.Text") == true)

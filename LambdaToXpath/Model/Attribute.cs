@@ -11,6 +11,7 @@ namespace LambdaToXpath.Model
         public Attribute(string name)
         {
             Name = name;
+            Equal = true;
         }
 
         internal string Name { get; set; } 

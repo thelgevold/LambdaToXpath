@@ -128,7 +128,6 @@ namespace LambdaToXpath
             }
             else
             {
-                //Ignore == true/false in expressions
                 if (rightExpression.GetType() == typeof(bool))
                 {
                     expressionTerm.Value = ((ExpressionTerm)leftExpression).Value;
