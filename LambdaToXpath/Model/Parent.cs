@@ -11,6 +11,7 @@ namespace LambdaToXpath.Model
         public Parent()
         {
             Attributes = new List<Attribute>();
+            TextContainsEqual = true;
         }
 
         public string Name { get; set; }
@@ -20,6 +21,8 @@ namespace LambdaToXpath.Model
         public bool TextContainsFunction { get; set; } 
 
         public int? Position { get; set; }
+
+        public bool TextContainsEqual{get;set;}
 
         public Attribute Attribute(string name)
         {

@@ -13,7 +13,10 @@ namespace LambdaToXpath.Model
             Attributes = new List<Attribute>();
             Siblings = new List<Sibling>();
             Relatives = new List<Relative>();
+            Equal = true;
         }
+
+        public bool Equal { get; set; }
 
         public string TargetElementName { get; set; }
 

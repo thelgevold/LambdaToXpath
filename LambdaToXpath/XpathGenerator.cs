@@ -28,7 +28,7 @@ namespace LambdaToXpath
                     if (element.Parent.Text != null)
                     {
                         xpath.Append(EnsureAndOperator(element.Parent.Attributes.Count));
-                        xpath.Append(GetTextPart(element.Parent.Text, element.Parent.TextContainsFunction));
+                        xpath.Append(GetTextPart(element.Parent.Text, element.Parent.TextContainsFunction, element.Parent.TextContainsEqual));
                     }
                     if (element.Parent.Position.HasValue == true)
                     {
@@ -72,7 +72,7 @@ namespace LambdaToXpath
                 if (element.TargetElementText != null)
                 {
                     xpath.Append(EnsureAndOperator(element.Attributes.Count, element.Siblings.Count, element.Position ?? 0, element.Relatives.Count));
-                    xpath.Append(GetTextPart(element.TargetElementText,element.TextContainsFunction));
+                    xpath.Append(GetTextPart(element.TargetElementText, element.TextContainsFunction, element.Equal));
                 }
 
                 xpath.Append("]");
@@ -110,10 +110,15 @@ namespace LambdaToXpath
             return string.Format("following-sibling::{0}", s.Name);
         }
 
-        private static string GetTextPart(string text, bool contains)
+        private static string GetTextPart(string text, bool contains, bool equal)
         {
             if (contains == true)
             {
+                if (equal == false)
+                {
+                    return string.Format("not(contains(text(),'{0}'))", text);
+                }
+
                 return string.Format("contains(text(),'{0}')", text);
             }
 

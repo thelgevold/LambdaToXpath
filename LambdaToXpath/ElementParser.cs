@@ -110,6 +110,7 @@ namespace LambdaToXpath
             {
                 element.TargetElementText = expressionPart.Value;
                 element.TextContainsFunction = expressionPart.FunctionArgument == "Contains";
+                element.Equal = expressionPart.ExpressionBooleanCondition;
                 return true;
             }
             else if (expressionPart.IsValidFunctionByRegex("Attribute(.*)\\.Text") == true)
@@ -167,6 +168,7 @@ namespace LambdaToXpath
                 EnsureParent(element);
                 element.Parent.Text = expressionPart.Value;
                 element.Parent.TextContainsFunction = expressionPart.FunctionArgument == "Contains";
+                element.Parent.TextContainsEqual = expressionPart.ExpressionBooleanCondition;
                 return true;
             }
             else if (expressionPart.IsValidFunctionByRegex("Parent.Attribute(.*)\\.Contains") == true)
