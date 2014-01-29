@@ -127,6 +127,10 @@ namespace LambdaToXpath
                 return string.Format("@{0}='{1}'", a.Name, a.Text);
             }
 
+            if (a.Equal == false)
+            {
+                return string.Format("not(contains(@{0},'{1}'))", a.Name, a.Text);
+            }
             return string.Format("contains(@{0},'{1}')", a.Name, a.Text);
         }
     }

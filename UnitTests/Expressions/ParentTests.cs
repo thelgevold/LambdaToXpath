@@ -84,6 +84,14 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Element_With_Parent_With_Attribute_Not_Containing_Text()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Attribute("id").Contains("_parent_child") == false);
+
+            Assert.AreEqual("//tr[not(contains(@id,'_parent_child'))]/td", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Element_With_Parent_With_Attribute_With_Exact_Text()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Attribute("id").Text == "_parent_child");

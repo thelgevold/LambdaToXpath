@@ -20,6 +20,14 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_With_Single_Attribute_Not_Containing_Text()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Attribute("id").Contains("_parent_child") == false);
+
+            Assert.AreEqual("//td[not(contains(@id,'_parent_child'))]", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_With_Attributes_Defined_By_Variables()
         {
             string myClass1 = "displayNone";

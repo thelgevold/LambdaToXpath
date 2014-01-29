@@ -119,7 +119,7 @@ namespace LambdaToXpath
             }
             else if (expressionPart.IsValidFunctionByRegex("Attribute(.*)\\.Contains") == true)
             {
-                element.Attributes.Add(new Model.Attribute(expressionPart.FunctionArgument) { Text = expressionPart.Value });
+                element.Attributes.Add(new Model.Attribute(expressionPart.FunctionArgument) { Text = expressionPart.Value, Equal = expressionPart.ExpressionBooleanCondition });
                 return true;
             }
 

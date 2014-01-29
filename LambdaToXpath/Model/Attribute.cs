@@ -24,5 +24,7 @@ namespace LambdaToXpath.Model
         }
 
         public bool ExactMatch { get; set; }
+
+        public bool Equal { get; set; }
     }
 }

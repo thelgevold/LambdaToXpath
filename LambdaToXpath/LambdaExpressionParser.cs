@@ -113,32 +113,33 @@ namespace LambdaToXpath
                 functionName = leftExpression.ToString();
             }
 
-            string value = null;
-
+            var expressionTerm = new ExpressionTerm() { Function = functionName, FunctionArgument = functionArgument };
+          
             var rightExpression = ParseSubExpressions(be.Right);
 
             if (rightExpression is string)
             {
-                value = rightExpression.ToString();
+                expressionTerm.Value = rightExpression.ToString();
             }
             if (rightExpression is ExpressionTerm)
             {
                 var expr = (ExpressionTerm)rightExpression;
-                value = expr.Value;
+                expressionTerm.Value = expr.Value;
             }
             else
             {
                 //Ignore == true/false in expressions
                 if (rightExpression.GetType() == typeof(bool))
                 {
-                    value = ((ExpressionTerm)leftExpression).Value;
+                    expressionTerm.Value = ((ExpressionTerm)leftExpression).Value;
+                    expressionTerm.ExpressionBooleanCondition = (bool)rightExpression;
                 }
                 else
                 {
-                    value = rightExpression.ToString();
+                    expressionTerm.Value = rightExpression.ToString();
                 }
             }
-            return new ExpressionTerm() { Function = functionName, Value = value, FunctionArgument = functionArgument };
+            return expressionTerm;
         }
 
         private static object InvokeExpression(Expression operation)

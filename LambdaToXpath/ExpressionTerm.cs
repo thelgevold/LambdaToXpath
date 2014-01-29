@@ -10,11 +10,21 @@ namespace LambdaToXpath
 {
     public class ExpressionTerm
     {
+        public ExpressionTerm()
+        {
+            ExpressionBooleanCondition = true;
+        }
+
         public string Function { get; set; }
 
         public string FunctionArgument { get; set; }
 
         public string Value { get; set; }
+
+        /// <summary>
+        /// Function returning bool is equal to this value (if applicable) Ex: e.TargetElement.Text.Contains(..) == ExpressionBooleanCondition
+        /// </summary>
+        public bool ExpressionBooleanCondition { get; set; } 
 
         public bool IsValidFunctionByName(string functionName)
         {
