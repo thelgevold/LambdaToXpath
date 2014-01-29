@@ -14,6 +14,8 @@ namespace LambdaToXpath
     {
         public static void ParseExpression(BinaryExpression chain, Element element)
         {
+            ThrowIfNotSupported(chain);
+
             if (chain.Left is BinaryExpression)
             {
                 Parse(element, (ExpressionTerm)ParseSubExpressions(chain.Right));
@@ -24,6 +26,22 @@ namespace LambdaToXpath
                 ExpressionTerm expressionTerm = (ExpressionTerm)ParseSubExpressions(chain.Right);
                 expressionTerm.Function = chain.Left.ToString();
                 Parse(element, expressionTerm);
+            }
+        }
+
+        private static void ThrowIfNotSupported(BinaryExpression expr)
+        {
+            var whiteList = new List<ExpressionType>();
+            whiteList.Add(ExpressionType.Constant);
+            whiteList.Add(ExpressionType.Call);
+            whiteList.Add(ExpressionType.Equal);
+            whiteList.Add(ExpressionType.Convert);
+            whiteList.Add(ExpressionType.AndAlso);
+            whiteList.Add(ExpressionType.MemberAccess);
+
+            if (whiteList.Contains(expr.NodeType) == false || whiteList.Contains(expr.Left.NodeType) == false || whiteList.Contains(expr.Right.NodeType) == false)
+            {
+                throw new NotSupportedException(string.Format("{0} expressions are not supported", expr.NodeType)); 
             }
         }
 
