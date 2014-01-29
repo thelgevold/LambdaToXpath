@@ -27,7 +27,7 @@ namespace UnitTests.Expressions
 
         [ExpectedException(typeof(NotSupportedException))]
         [TestMethod]
-        public void Not_Expression_Not_Supported2()
+        public void Not_Expression_Not_Supported()
         {
             CreateXpath.Where(e => e.TargetElementName == "td" && !e.TargetElementText.Contains("test"));
         }
