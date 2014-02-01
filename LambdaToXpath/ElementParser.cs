@@ -210,9 +210,17 @@ namespace LambdaToXpath
             whiteList.Add(ExpressionType.AndAlso);
             whiteList.Add(ExpressionType.MemberAccess);
 
-            if (whiteList.Contains(expr.NodeType) == false || whiteList.Contains(expr.Left.NodeType) == false || whiteList.Contains(expr.Right.NodeType) == false)
+            if (whiteList.Contains(expr.NodeType) == false)
             {
                 throw new NotSupportedException(string.Format("{0} expressions are not supported", expr.NodeType));
+            }
+            else if (whiteList.Contains(expr.Left.NodeType) == false)
+            {
+                throw new NotSupportedException(string.Format("{0} expressions are not supported", expr.Left.NodeType));
+            }
+            else if (whiteList.Contains(expr.Right.NodeType) == false)
+            {
+                throw new NotSupportedException(string.Format("{0} expressions are not supported", expr.Right.NodeType));
             }
         }
     }
