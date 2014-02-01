@@ -53,6 +53,7 @@
     <Compile Include="Expressions\AttributeTests.cs" />
     <Compile Include="Expressions\DecendantAndAncestorTests.cs" />
     <Compile Include="Expressions\NoConflictTests.cs" />
+    <Compile Include="Expressions\NonElementReturnsTests.cs" />
     <Compile Include="Expressions\NotSupportedExpressionsTests.cs" />
     <Compile Include="Expressions\ParentTests.cs" />
     <Compile Include="Expressions\PositionTests.cs" />
