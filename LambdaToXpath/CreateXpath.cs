@@ -15,6 +15,11 @@ namespace LambdaToXpath
             get { return "/text()"; }
         }
 
+        public string TextAt(int index)
+        {
+            return "";
+        }
+
         public string Attribute(string name)
         {
             return string.Format("@{0}",name.Trim('@'));
@@ -47,6 +52,12 @@ namespace LambdaToXpath
             {
                 MethodCallExpression me = (MethodCallExpression)expr.Body;
                 var val = Expression.Lambda(me.Arguments[0]).Compile().DynamicInvoke().ToString();
+
+                if (me.Method.Name == "TextAt") 
+                {
+                    return string.Format("{0}/text()[{1}]",this.Expr, val);
+                }
+                //Fall back on attribute
                 return string.Format("{0}/@{1}", this.Expr, val);
             }
        }
