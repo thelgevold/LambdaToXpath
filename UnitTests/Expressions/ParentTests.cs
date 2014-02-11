@@ -52,6 +52,18 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Element_With_Parent_Ending_With_Text()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Text.EndsWith("test") == true);
+
+            Assert.AreEqual("//tr[ends-with(text(),'test')]/td", xpath);
+
+            xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Text.EndsWith("test"));
+
+            Assert.AreEqual("//tr[ends-with(text(),'test')]/td", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Element_With_Parent_Not_Starting_With_Text()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Text.StartsWith("test") == false);

@@ -16,6 +16,8 @@ namespace LambdaToXpath
                     return "contains";
                 case "StartsWith":
                     return "starts-with";
+                case "EndsWith":
+                    return "ends-with";
             }
 
             throw new ArgumentException(name);

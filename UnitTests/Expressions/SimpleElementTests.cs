@@ -46,6 +46,14 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_Ending_With_Text()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "span" && e.TargetElementText.EndsWith("Test"));
+
+            Assert.AreEqual("//span[ends-with(text(),'Test')]", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_Not_Starting_With_Text()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "span" && e.TargetElementText.StartsWith("Test") == false);
