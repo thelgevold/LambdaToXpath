@@ -38,6 +38,31 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_Starting_With_Text()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "span" && e.TargetElementText.StartsWith("Test"));
+
+            Assert.AreEqual("//span[starts-with(text(),'Test')]", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_Not_Starting_With_Text()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "span" && e.TargetElementText.StartsWith("Test") == false);
+
+            Assert.AreEqual("//span[not(starts-with(text(),'Test'))]", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Simple_Element_Starting_With_Text_Represented_By_Variable()
+        {
+            string test = "Test";
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "span" && e.TargetElementText.StartsWith(test));
+
+            Assert.AreEqual("//span[starts-with(text(),'Test')]", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Simple_Element_Containing_Text()
         {
             string tdElement = "td";

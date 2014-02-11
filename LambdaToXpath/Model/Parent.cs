@@ -18,7 +18,7 @@ namespace LambdaToXpath.Model
 
         public string Text { get; set; }
 
-        public bool TextContainsFunction { get; set; } 
+        public string TextFunction { get; set; } 
 
         public int? Position { get; set; }
 

@@ -28,7 +28,7 @@ namespace LambdaToXpath
                     if (element.Parent.Text != null)
                     {
                         xpath.Append(EnsureAndOperator(element.Parent.Attributes.Count));
-                        xpath.Append(GetTextPart(element.Parent.Text, element.Parent.TextContainsFunction, element.Parent.TextContainsEqual));
+                        xpath.Append(GetTextPart(element.Parent.Text, element.Parent.TextFunction, element.Parent.TextContainsEqual));
                     }
                     if (element.Parent.Position.HasValue == true)
                     {
@@ -72,7 +72,7 @@ namespace LambdaToXpath
                 if (element.TargetElementText != null)
                 {
                     xpath.Append(EnsureAndOperator(element.Attributes.Count, element.Siblings.Count, element.Position ?? 0, element.Relatives.Count));
-                    xpath.Append(GetTextPart(element.TargetElementText, element.TextContainsFunction, element.Equal));
+                    xpath.Append(GetTextPart(element.TargetElementText, element.TextFunction, element.Equal));
                 }
 
                 xpath.Append("]");
@@ -110,16 +110,18 @@ namespace LambdaToXpath
             return string.Format("following-sibling::{0}", s.Name);
         }
 
-        private static string GetTextPart(string text, bool contains, bool equal)
+        private static string GetTextPart(string text, string function, bool equal)
         {
-            if (contains == true)
+            if(function != null)
             {
+                string textFunction = MethodNameMapper.MapToXpathFunctionName(function);
+           
                 if (equal == false)
                 {
-                    return string.Format("not(contains(text(),'{0}'))", text);
+                    return string.Format("not({0}(text(),'{1}'))",textFunction, text);
                 }
 
-                return string.Format("contains(text(),'{0}')", text);
+                return string.Format("{0}(text(),'{1}')",textFunction, text);
             }
 
             return string.Format("text()='{0}'",text);

@@ -43,6 +43,7 @@
     <Compile Include="ExpressionTerm.cs" />
     <Compile Include="LambdaExpressionParser.cs" />
     <Compile Include="CreateXpath.cs" />
+    <Compile Include="MethodNameMapper.cs" />
     <Compile Include="Model\Relative.cs" />
     <Compile Include="Model\Attribute.cs" />
     <Compile Include="Model\Element.cs" />

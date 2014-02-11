@@ -174,7 +174,7 @@ namespace LambdaToXpath
                 }
 
                 var text = Expression.Lambda(me.Arguments[0]).Compile().DynamicInvoke().ToString();
-                return new ExpressionTerm() { Value = text, Function = textFunction, FunctionArgument = "Contains" };
+                return new ExpressionTerm() { Value = text, Function = textFunction, FunctionArgument = me.Method.Name };
             }
             
             if (me.Object != null && me.Object.Type == typeof(Model.Attribute))

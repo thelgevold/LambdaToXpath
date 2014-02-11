@@ -24,11 +24,39 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void Will_Generate_Xpath_For_Element_Where_Both_Parent_And_Element_Start_With_Text()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Text.StartsWith("parentText") && e.TargetElementText.StartsWith("childText"));
+
+            Assert.AreEqual("//tr[starts-with(text(),'parentText')]/td[starts-with(text(),'childText')]", xpath);
+        }
+
+        [TestMethod]
         public void Will_Generate_Xpath_For_Element_With_Parent_With_Text()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Text == "test");
 
             Assert.AreEqual("//tr[text()='test']/td", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Element_With_Parent_Starting_With_Text()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Text.StartsWith("test") == true);
+
+            Assert.AreEqual("//tr[starts-with(text(),'test')]/td", xpath);
+
+            xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Text.StartsWith("test"));
+
+            Assert.AreEqual("//tr[starts-with(text(),'test')]/td", xpath);
+        }
+
+        [TestMethod]
+        public void Will_Generate_Xpath_For_Element_With_Parent_Not_Starting_With_Text()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "td" && e.Parent.Name == "tr" && e.Parent.Text.StartsWith("test") == false);
+
+            Assert.AreEqual("//tr[not(starts-with(text(),'test'))]/td", xpath);
         }
 
         [TestMethod]

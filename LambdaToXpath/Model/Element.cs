@@ -22,7 +22,7 @@ namespace LambdaToXpath.Model
 
         public string TargetElementText { get; set; }
 
-        public bool TextContainsFunction { get; set; } 
+        public string TextFunction { get; set; } 
 
         public Parent Parent { get; set; }
 
