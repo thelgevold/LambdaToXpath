@@ -20,7 +20,7 @@ namespace UnitTests.Expressions
         }
 
         [TestMethod]
-        public void Exact_Text_And_Partial_Attribute()
+        public void Exact_Text_And_Exact_Attribute()
         {
             var xpath = CreateXpath.Where(e => e.TargetElementName == "li" && e.TargetElementText == "text1234" && e.Attribute("class").Text == "myClass");
 
