@@ -19,5 +19,12 @@ namespace UnitTests.Expressions
             Assert.AreEqual("//li[contains(@class,'myClass') and contains(text(),'text1234')]", xpath);
         }
 
+        [TestMethod]
+        public void Exact_Text_And_Partial_Attribute()
+        {
+            var xpath = CreateXpath.Where(e => e.TargetElementName == "li" && e.TargetElementText == "text1234" && e.Attribute("class").Text == "myClass");
+
+            Assert.AreEqual("//li[@class='myClass' and text()='text1234']", xpath);
+        }
     }
 }
